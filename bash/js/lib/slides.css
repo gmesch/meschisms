@@ -1,0 +1,387 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  color: black;
+  background-color: white;
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 2.4vw;
+}
+
+H1, H2, H3, H4, H5, H6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.header {
+  position: fixed;
+  top: 3px;
+  height: 10px;
+  width: 100%;
+}
+
+.header #follow {
+  position: absolute;
+  top: 0.1em;
+  right: 0.3em;
+  font-size: 1.2vw;
+  cursor: pointer;
+}
+
+#navigator div {
+  float: left;
+  width: 8px;
+  height: 6px;
+  font-size: 1px;
+  border: 1px solid silver;
+  background-color: white;
+  cursor: pointer;
+  margin: 2px;
+}
+
+#navigator.large div {
+  width: 12px;
+  height: 9px;
+}
+
+#navigator div.active {
+  background-color: orange !important;
+  border: 1px solid silver !important;
+  cursor: default;
+}
+
+#navigator div.active {
+  background-color: #1a75cf;
+  cursor: default;
+}
+
+#bgpage {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  border: 1px solid red;
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.slides {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.slides .slide {
+  display: none;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.slide H1 {
+  font-size: 150%;
+  font-weight: normal;
+
+  text-align: left;
+
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  margin-bottom: 0.5em;
+
+  padding: 1.5vw;
+  padding-top: 1.8vw;
+  width: 100%;
+
+  # background-color: #f8f8f8;
+  # border-bottom:2px solid orange;
+}
+
+.slide.title {
+  background-color: black;
+}
+
+.slide.title H1 {
+  text-align: left;
+
+  margin: 0;
+  padding: 0;
+  width: 100%;
+
+  background-color: inherit;
+  border-bottom: none;
+  border: 0;
+}
+
+.slide.continued H1 {
+  font-weight: lighter;
+}
+
+.slide.continued H1::after {
+  font-size: 80%;
+  color: silver;
+  content: "(continued)";
+  position: absolute;
+  right: 0;
+  padding-right: 0.3em;
+}
+
+.slide.fit {
+  text-allign: center;
+  vertical-align: center;
+  font-size: 25.5vw;
+}
+
+.slides.display-notes .slide .notes {
+  display: block;
+}
+
+.slide .notes {
+  display: none;
+  position: fixed;
+  width: 50%;
+  right: 0.8vw;
+  bottom: 0.8vw;
+  padding: 0.3vw;
+  background-color: #ffffe0;
+  color: #505050;
+  border: 1px solid silver;
+  filter: 'opacity(20%)'
+}
+
+.slide H2 {
+  font-size: 110%;
+  font-weight: bold;
+}
+
+.slide LI {
+  margin-bottom: 0.5em;
+  line-height: 1.3em;
+  padding-right: 0.3em;
+}
+
+.slide > DIV, .slide P {
+  margin-bottom: 0.8em;
+  line-height: 1.3em;
+  padding-left: 0.8vw;
+  padding-right: 0.4vw;
+}
+
+.slide > DIV {
+  margin-top: 0.5em;
+}
+
+.slide UL LI {
+  list-style-type: circle;
+}
+
+.slide TABLE {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.slide TH {
+  font-family: sans-serif;
+  padding: 1vw;
+}
+
+.slide TD {
+  font-family: sans-serif;
+  padding: 1vw;
+}
+
+.slide UL, .slide OL {
+  margin-top: 0.3em;
+  padding-inline-start: 2em;
+}
+
+.slide DT {
+  font-size: 20px;
+  font-family: sans-serif;
+  margin-bottom: 0.3em;
+}
+
+.slide DD {
+  font-size: 20px;
+  font-family: sans-serif;
+  margin-bottom: 2em;
+}
+
+
+.slide CODE {
+  color: green;
+  font-size: 100%;
+}
+
+.slide .code {
+  color: green;
+  font-size: 100%;
+  font-family: monospace;
+  background-color: silver;
+  border: 1px solid gray;
+  margin: 10px 30px 10px 10px;
+  padding: 10px;
+}
+
+.slide CODE.b {
+  font-weight: bold;
+}
+
+.prettyprint .h {
+  background-color: #ffff50;
+}
+
+.slide PRE {
+    margin-left: 1em;
+    padding: 1em;
+    border: none;
+    overflow: hidden;
+    line-height: 140%;
+    font-weight: bold;
+}
+
+.slide .text {
+    margin: 0;
+    padding-left: 2.5vw;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+    padding-right: 2.5vw;
+    line-height: 180%;
+    font-size: 80%;
+    width: 80%;
+}
+
+.slide DIV.hint {
+  font-size: 80%;
+  color: #c0c0c0;
+  text-align: center;
+}
+
+#log {
+  position: absolute;
+  z-index: 200;
+  font-size: 30px;
+  top: 3px;
+  width: 300px;
+  color: gray;
+  background-color: white;
+}
+
+.footer {
+  position: absolute;
+  bottom: 3px;
+  width: 100%;
+  color: gray;
+}
+
+.footer .title {
+  position: absolute;
+  height: 2em;
+  bottom: 0px;
+  right: 10px;
+}
+
+.footer .author {
+  position: absolute;
+  height: 2em;
+  bottom: 0px;
+  left: 10px;
+}
+
+.slide.banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide.banner > DIV, .slide.banner > H1, .slide.banner > UL {
+  border: 1px solid silver;
+  width: 80%;
+  font-size: 130%;
+  text-align: center;
+  padding: 0.5em;
+}
+
+/* Code snippets. */
+
+iframe.example {
+  width: 99%;
+  height: 75%;
+  border: 1px solid silver;
+}
+
+pre {
+  border: 1px solid silver;
+}
+
+div.snippet {
+  position: relative;
+}
+
+div.snippet > div.label {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  border: 1px solid silver;
+  color: green;
+  font-family: monospace;
+  background-color: #f0f0f0;
+  padding: 0.2em;
+}
+
+
+/* Tables on slides. */
+
+.slide table.data-table {
+  width: 80%;
+  border: 1px solid silver;
+  padding: 1em;
+  border-collapse: collapse;
+  margin: 2em;
+}
+
+.slide table.data-table td, .slide table.data-table th {
+  border: 1px solid silver;
+}
+
+.slide table td, .slide table th {
+  vertical-align: top;
+}
+
+/* Layering follows -- set z-index only in the section below. */
+
+body {
+  z-index: 0;
+}
+
+.slides {
+  z-index: 2;
+}
+
+.background {
+  z-index: 3;
+}
+
+.header, .footer, #navigator {
+  z-index: 4;
+}
+
+.logo {
+  z-index: 5;
+}
+
+.float, #workshop {
+  z-index: 6;
+}

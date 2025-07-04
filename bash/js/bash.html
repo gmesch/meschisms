@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+  <head>
+    <title>bash habits</title>
+    <script src="lib/loader.js"></script>
+  </head>
+
+  <body onload="init()">
+
+    <div id="bgpage" class="background">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="header">
+      <div id="follow" style="display:none">follow</div>
+    </div>
+
+    <div id="footer" class="footer">
+      <div id="navigator" class="large"></div>
+    </div>
+
+    <!-- div id="log">[log]</div -->
+
+    <div id="slides" class="slides">
+      <div class="slide title"
+           style="background-color:#d0d0d0; padding:5vw"
+           onshow="d0('navigator','footer');v0('bgpage')"
+           onhide="d1('navigator','footer');v1('bgpage')">
+        <div style="height: 15%"></div>
+        <h1 style="color:red;font-weight:bold">Habits for writing bash scripts</h1>
+        <h1 style="color:#808080">Mesch</h1>
+
+        <h2 style="position:absolute; bottom:5%; padding-left:0.1vw; color:#cfa070">meschisms.xyz, 2025</h2>
+      </div>
+
+      <div class="slide build-focus-visible" group="intro" name=intro>
+        <h1>Why write bash scripts</h1>
+
+        <div class="text" step="1">Engineering is the art of never doing anything more than twice. You
+          do somthing manually once. Eventually you may do it again. But before
+          you do it a third time, you build an engine that does it for you. This
+          is what makes you an engineer -- building engines, not operating
+          them. This distinction is clearer in German, which uses the French
+          word Ingenieur, which derives from ingenuity. You need more ingenuity
+          to build engines than to operate them.</div>
+
+        <div class="text" step="2">Configuring computers is notorious for doing things
+          manually. Witness the usual README.md file describing how to install
+          some opensource software and its prerequisites. Or the average Google
+          Cloud documentation page. All this is subject to engineering too. Once
+          you did it, you should have a program doing it for you. Anything that
+          you did in a shell in a terminal, you can easily convert into a shell
+          script. Once converted, shell scripts can raise productivity not just
+          by doing the same thing automatically,but also by automating
+          variations: repeating things in a loop, or following decisions to
+          alternative variants. Thus shell scripts are a natural and
+          effective ways to build engines from simple interactions.</div>
+      </div>
+
+      <div class="slide build-focus-visible continued" group="intro">
+        <h1>Why write bash scripts</h1>
+
+        <div class="text" step="1">Shell scripts, however, have a reputation for
+          not being robust, especially not at scale. Very simple habits increase
+          robustness tremendously. The following pages summarize and motivate
+          these habits for the bash shell.</div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules" name="set-e">
+        <h1>Fail at every error</h1>
+
+        <div class="snippet">
+          <pre class="prettyprint">set -e</pre>
+        </div>
+
+        <div class="text">The option `-e` causes the shell to exit with error
+          status altogether whenever any command it executes fails.
+        </div>
+
+        <div class="text">Failure status of a command is also used to make
+          decisions in branch statements like `if`. If a command in the decision
+          clause of an `if` statement fails, it causes the flow of control to
+          take the `else` branch as usual, not to exit the whole program.</div>
+
+        <div class="text">If any step in a program fails, the program as a whole
+          should fail. Otherwise it is unclear what the rest of the program
+          would do. Sometimes failure is acceptable, in that case the exit can
+          be explictly prevented, for example by excuting it inside an `if`
+          statement to check for its error status.</div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules" name="pipefail">
+        <h1>Fail at really every error</h1>
+
+        <div class="snippet">
+          <pre class="prettyprint">set -o pipefail</pre>
+        </div>
+
+        <div class="text">The shell makes it easy to plug commands together in
+          pipelines. Normally a pipeline command is considered failed (and
+          causes the shell to exit when `set -e` is on) if the last command in
+          the pipeline fails. This option makes a pipeline fail if any command
+          in the pipeline fails.
+        </div>
+
+        <div class="text">Same as for `set -e`.</div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules" name="declare-r">
+        <h1>Define all variables const</h1>
+
+        <div class="snippet">
+          <pre class="prettyprint">declare -r FOO=bar</pre>
+        </div>
+
+        <div class="text">The option `-r` to the `declare` builtin makes a variable value
+          immutable.
+        </div>
+
+        <div class="text">Motivation: This makes it very reliable to lookup the meaning of a
+          variable: If you find the `declare` statement of the variable, you
+          know this is the value it must have wherever it is referenced, because
+          there is no way to ever change its value in between the definition and
+          the use.
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules" name="set-u">
+        <h1>Fail at undefined variables</h1>
+
+        <div class="snippet">
+          <pre class="prettyprint">set -u</pre>
+        </div>
+
+        <div class="text">The option `-u` makes it an error to reference undefined
+          variables. Together with option `-e`, it causes the shell to exit with
+          error whenever an undefined variable is used.
+        </div>
+
+        <div class="text">Motivation: Variables are easier to understand if they are
+          defined. So every variable should be defined before it's used. This
+          enforces it.
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules" name="set-u">
+        <h1>Summary of semantic safety rules</h1>
+
+        <div class="snippet">
+          <pre class="prettyprint">
+            set -euo pipefail
+            declare -r FOO=bar
+
+            echo "FOO=${FOO}"
+          </pre>
+        </div>
+
+        <div class="text">
+          These 3 rules make shell scripts much more robust. There are, however,
+          some pitfalls in applying these rules, explained next.
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules" name="subst-e">
+        <h1>errors in command substitutions</h1>
+
+        <div class="text">
+          Command substutions are affected by `set -e` only in variable
+          assignments but NOT in command line arguments. For example,
+        </div>
+        <div class="snippet">
+          <pre class="prettyprint">
+            PYTHON_VERSION=$(python --version | sed 's/Python //')
+          </pre>
+        </div>
+        <div class="text">
+          will fail if `python` is not found on `PATH`. But this will not:
+        </div>
+        <div class="snippet">
+          <pre class="prettyprint">
+            declare -r PYTHON_VERSION=$(python --version | sed 's/Python //')
+          </pre>
+        </div>
+
+        <div class="text">The "reason" is that set -e affects command
+          interpolation only if it appears in a variable assignment. It does NOT
+          affect any command line interpolation in the arguments of a
+          command. Now, `declare` is just another command, and the variable
+          assignment is just one of its arguments. No errors are caught there.
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible continued" group="rules">
+        <h1>errors in command substitutions</h1>
+
+        <div class="text">
+          The solution is this pattern:
+        </div>
+        <div class="snippet">
+          <pre class="prettyprint">
+            PYTHON_VERSION=$(python --version | sed 's/Python //')
+            declare -r PYTHON_VERSION
+            if [[ $PYTHON_VERSION = 3.* ]]; then ...; fi
+          </pre>
+        </div>
+        <div class="text">
+          <ol>
+            <li>Assign command interpolation to a veriable. Under `set -e` this
+              fails if the command fails.
+            <li>`declare -r` the variable to ensure it is not declared again.
+            <li>Use the variable.
+          </ol>
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules">
+        <h1>That's really it</h1>
+
+        <div class="text">
+          With these pitfalls in mind, shell scripts are already much more
+          robust.
+        </div>
+
+        <div class="text">
+          Next we summarize a few concepts that are essential to understand in
+          order to robust write (and read) shell scripts.
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules">
+        <h1>Array variables</h1>
+
+        <div class="snippet">
+          <pre class="prettyprint">
+            declare -ra PIP_PACKAGES=(
+              numpy
+              pandas
+              torch
+            )
+          </pre>
+        </div>
+
+        <div class="text">
+          Variables can hold array values if declared using `declare -a`. It can
+          be combined with `declare -r`. Like scalar variables the array value
+          of a readonly array variable is immutable.
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules">
+        <h1>Use array variables for long argument lists</h1>
+
+        <div class="snippet">
+          <pre class="prettyprint">
+            pip install "${PIP_PACKAGES[@]}"
+          </pre>
+        </div>
+
+        <div class="text">
+          Instead of writing long argument lists of commands in a continued
+          line, write the arguments down as an array. The array elements can be
+          commented on without interfering with escape character needed to
+          continue a long line.
+        </div>
+      </div>
+
+      <div class="slide build-focus-visible" group="rules">
+        <h1>Access all elements of an array variable</h1>
+
+        <div class="snippet">
+          WRONG:
+          <pre class="prettyprint">
+            pip install "${PIP_PACKAGES[*]}"
+          </pre>
+        </div>
+
+        <div class="text">
+          Array variables can be dereferenced as a list value using the `[@]`
+          index inside double quotes. Using the `[*]` index dereferences all
+          list values as a single string value. The command above would fail
+          because it cannot install the package called `numpy pandas torch`.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
