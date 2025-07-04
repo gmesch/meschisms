@@ -8,6 +8,8 @@ A simple React + TypeScript slide viewer that loads slides from YAML files and r
 - Each slide supports markdown formatting with syntax highlighting
 - Navigate slides with the ↑ and ↓ arrow keys
 - Dynamic content loading via URL parameters
+- URL synchronization - current slide is reflected in the URL
+- Start at any specific slide via URL parameter
 - Built with React 18 and TypeScript
 - Webpack build system
 
@@ -42,15 +44,24 @@ npm run serve
 
 - The app loads `content.yaml` by default from the `dist` directory
 - You can specify a different content file using the `?content=` URL parameter
+- You can specify a starting slide using the `?slide=` URL parameter
 - Each slide has a `title` and `text` (markdown) in the YAML file
 - The app displays the current slide and renders its markdown as HTML with syntax highlighting
 - Use the up/down arrow keys to move between slides
+- The URL automatically updates to reflect the current slide
 
 ## Usage Examples
 
-- **Default content**: `http://localhost:8080` (loads `content.yaml`)
-- **Custom content**: `http://localhost:8080?content=my-slides.yaml` (loads `my-slides.yaml`)
+- **Default content, first slide**: `http://localhost:8080` (loads `content.yaml`, starts at slide 1)
+- **Custom content**: `http://localhost:8080?content=my-slides.yaml` (loads `my-slides.yaml`, starts at slide 1)
+- **Start at specific slide**: `http://localhost:8080?slide=3` (loads `content.yaml`, starts at slide 4)
+- **Custom content and slide**: `http://localhost:8080?content=my-slides.yaml&slide=2` (loads `my-slides.yaml`, starts at slide 3)
 - **Subdirectory content**: `http://localhost:8080?content=slides/presentation.yaml`
+
+## URL Parameters
+
+- `content`: Specifies the YAML file to load (default: `content.yaml`)
+- `slide`: Specifies the starting slide number (0-based, default: 0)
 
 ## Content File Format
 

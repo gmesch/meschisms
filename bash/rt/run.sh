@@ -5,4 +5,4 @@ npm install
 npm run build
 
 # Serve the dist directory with SPA fallback
-npx http-server dist -p 8080 -o --spa 
+npx http-server dist -p 8080 --spa
