@@ -21,6 +21,10 @@ module.exports = {
       {
         test: /\.yaml$/,
         use: 'yaml-loader'
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },

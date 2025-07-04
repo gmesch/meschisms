@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { marked } from 'marked';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
 import content from '../content.yaml';
 
 interface Slide {
@@ -11,6 +13,18 @@ interface ContentData {
   title: string;
   slides: Slide[];
 }
+
+// Configure marked to use highlight.js for syntax highlighting
+marked.use({
+  renderer: {
+    code(code: string, infostring: string | undefined, escaped: boolean) {
+      const language = infostring || 'plaintext';
+      const validLanguage = hljs.getLanguage(language) ? language : 'plaintext';
+      const highlighted = hljs.highlight(code, { language: validLanguage }).value;
+      return `<pre><code class="hljs language-${validLanguage}">${highlighted}</code></pre>`;
+    }
+  }
+});
 
 const SlideViewer: React.FC = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);

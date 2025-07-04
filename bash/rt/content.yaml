@@ -2,7 +2,7 @@ title: Habits for writing bash scripts
 slides:
   - title: Fail at every error
     text: |
-      ```
+      ```bash
       set -e
       ```
 
@@ -22,7 +22,7 @@ slides:
 
   - title: Fail at really every error
     text: |
-      ```
+      ```bash
       set -o pipefail
       ```
 
