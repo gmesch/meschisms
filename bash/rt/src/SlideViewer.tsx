@@ -87,10 +87,14 @@ const SlideViewer: React.FC = () => {
   if (loading) {
     return (
       <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
         fontSize: '18px',
         color: '#666'
       }}>
@@ -102,11 +106,15 @@ const SlideViewer: React.FC = () => {
   if (error) {
     return (
       <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
         padding: '40px',
         textAlign: 'center'
       }}>
@@ -132,62 +140,102 @@ const SlideViewer: React.FC = () => {
 
   return (
     <div style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      padding: '40px',
       fontFamily: 'Arial, sans-serif',
-      maxWidth: '800px',
-      margin: '0 auto'
+      padding: '40px',
+      boxSizing: 'border-box',
+      overflow: 'hidden'
     }}>
+      {/* Fixed header section - always at top */}
       <div style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        marginBottom: '20px',
-        textAlign: 'center',
-        color: '#333'
+        height: '120px',
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start'
       }}>
-        {contentData.title}
+        <div style={{
+          fontSize: '24px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          color: '#333',
+          marginBottom: '20px',
+          height: '30px',
+          lineHeight: '30px'
+        }}>
+          {contentData.title}
+        </div>
+        
+        <div style={{
+          fontSize: '32px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          color: '#2c3e50',
+          height: '40px',
+          lineHeight: '40px'
+        }}>
+          {currentSlide.title}
+        </div>
       </div>
       
+      {/* Content area - takes remaining space */}
       <div style={{
-        fontSize: '32px',
-        fontWeight: 'bold',
-        marginBottom: '30px',
-        textAlign: 'center',
-        color: '#2c3e50'
+        flex: '1 1 auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        minHeight: 0
       }}>
-        {currentSlide.title}
+        <div 
+          style={{
+            fontSize: '18px',
+            lineHeight: '1.6',
+            textAlign: 'left',
+            color: '#34495e',
+            maxWidth: '800px',
+            width: '100%',
+            maxHeight: '100%',
+            overflow: 'auto'
+          }}
+          dangerouslySetInnerHTML={{ __html: slideContent }}
+        />
       </div>
       
-      <div 
-        style={{
-          fontSize: '18px',
-          lineHeight: '1.6',
-          textAlign: 'left',
-          color: '#34495e'
-        }}
-        dangerouslySetInnerHTML={{ __html: slideContent }}
-      />
-      
+      {/* Fixed footer section - always at bottom */}
       <div style={{
-        fontSize: '16px',
-        marginTop: '40px',
-        color: '#7f8c8d',
-        textAlign: 'center'
+        height: '80px',
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
       }}>
-        Slide {currentSlideIndex + 1} of {contentData.slides.length}
-      </div>
-      
-      <div style={{
-        fontSize: '14px',
-        marginTop: '20px',
-        color: '#95a5a6',
-        textAlign: 'center'
-      }}>
-        Use ↑ and ↓ arrow keys to navigate slides
+        <div style={{
+          fontSize: '16px',
+          color: '#7f8c8d',
+          textAlign: 'center',
+          marginBottom: '10px',
+          height: '20px',
+          lineHeight: '20px'
+        }}>
+          Slide {currentSlideIndex + 1} of {contentData.slides.length}
+        </div>
+        
+        <div style={{
+          fontSize: '14px',
+          color: '#95a5a6',
+          textAlign: 'center',
+          height: '20px',
+          lineHeight: '20px'
+        }}>
+          Use ↑ and ↓ arrow keys to navigate slides
+        </div>
       </div>
     </div>
   );
