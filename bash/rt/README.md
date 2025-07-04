@@ -1,10 +1,12 @@
-# Meschisms React App
+# Meschisms Slide Viewer App
 
-A simple React counter application built with TypeScript.
+A simple React + TypeScript slide viewer that loads slides from a YAML file and renders markdown content.
 
 ## Features
 
-- Counter that increments/decrements with arrow keys
+- Displays slides defined in `content.yaml`
+- Each slide supports markdown formatting
+- Navigate slides with the ↑ and ↓ arrow keys
 - Built with React 18 and TypeScript
 - Webpack build system
 
@@ -24,9 +26,13 @@ npm run build
 npm run type-check
 ```
 
-## TypeScript
+## How it works
 
-This project has been converted from JavaScript to TypeScript with:
+- Edit `content.yaml` to add or change slides. Each slide has a `title` and `text` (markdown).
+- The app displays the current slide and renders its markdown as HTML.
+- Use the up/down arrow keys to move between slides.
+
+## TypeScript
 
 - Strict type checking enabled
 - React.FC type annotations for components
@@ -37,6 +43,7 @@ This project has been converted from JavaScript to TypeScript with:
 
 ```
 src/
-├── index.tsx      # Application entry point
-└── Counter.tsx    # Main counter component
+├── index.tsx        # Application entry point
+├── SlideViewer.tsx  # Main slide viewer component
+content.yaml         # Slide content (YAML)
 ``` 

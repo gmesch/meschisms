@@ -1,0 +1,32 @@
+title: Habits for writing bash scripts
+slides:
+  - title: Fail at every error
+    text: |
+      ```
+      set -e
+      ```
+
+      The option `-e` causes the shell to exit with error
+      status altogether whenever any command it executes fails.
+
+      Failure status of a command is also used to make
+      decisions in branch statements like `if`. If a command in the decision
+      clause of an `if` statement fails, it causes the flow of control to
+      take the `else` branch as usual, not to exit the whole program.
+
+      If any step in a program fails, the program as a whole should
+      fail. Otherwise it is unclear what the rest of the program would
+      do. Sometimes failure is acceptable, in that case the exit can be
+      explictly prevented, for example by excuting it inside an `if` statement
+      to check for its error status.
+
+  - title: Fail at really every error
+    text: |
+      ```
+      set -o pipefail
+      ```
+
+      The shell makes it easy to plug commands together in pipelines. Normally a
+      pipeline command is considered failed (and causes the shell to exit when
+      `set -e` is on) if the last command in the pipeline fails. This option
+      makes a pipeline fail if any command in the pipeline fails.

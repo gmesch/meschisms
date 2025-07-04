@@ -2,7 +2,7 @@
 
 echo "Checking for Node.js and npm..."
 if command -v node &> /dev/null && command -v npm &> /dev/null; then
-    echo "Node.js and npm found. Building TypeScript React application..."
+    echo "Node.js and npm found. Building TypeScript React slide viewer..."
     
     echo "Installing dependencies..."
     npm install
@@ -15,7 +15,7 @@ if command -v node &> /dev/null && command -v npm &> /dev/null; then
         exit 1
     fi
     
-    echo "Building TypeScript React application with webpack..."
+    echo "Building TypeScript React slide viewer with webpack..."
     if npm run build; then
         echo "✅ Build completed successfully"
     else
@@ -24,14 +24,15 @@ if command -v node &> /dev/null && command -v npm &> /dev/null; then
     fi
     
     echo ""
-    echo "🎉 TypeScript React application build complete!"
+    echo "🎉 TypeScript React slide viewer build complete!"
     echo ""
-    echo "To open the React application:"
+    echo "To open the slide viewer:"
     echo "1. Open index.html in your web browser"
     echo "2. Or run: open index.html (on macOS)"
     echo "3. Or run: xdg-open index.html (on Linux)"
     echo ""
-    echo "Use the ↑ and ↓ arrow keys to increment/decrement the number."
+    echo "Slides are loaded from content.yaml and support markdown formatting."
+    echo "Use the ↑ and ↓ arrow keys to navigate between slides."
     echo ""
     echo "Development commands:"
     echo "- To rebuild after changes: npm run build"
