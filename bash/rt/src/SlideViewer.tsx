@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
-import content from '../content.yaml';
+import YAML from 'js-yaml';
 
 interface Slide {
   title: string;
@@ -28,10 +28,43 @@ marked.use({
 
 const SlideViewer: React.FC = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
-  const contentData = content as ContentData;
-  const slides = contentData.slides;
+  const [contentData, setContentData] = useState<ContentData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const loadContent = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Get content filename from URL parameter or use default
+        const urlParams = new URLSearchParams(window.location.search);
+        const contentFile = urlParams.get('content') || 'content.yaml';
+        
+        // Fetch the YAML file
+        const response = await fetch(contentFile);
+        if (!response.ok) {
+          throw new Error(`Failed to load content file: ${response.statusText}`);
+        }
+        
+        const yamlText = await response.text();
+        const parsedContent = YAML.load(yamlText) as ContentData;
+        
+        setContentData(parsedContent);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load content');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadContent();
+  }, []);
+
+  useEffect(() => {
+    if (!contentData) return;
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowUp') {
         setCurrentSlideIndex(prevIndex => 
@@ -39,7 +72,7 @@ const SlideViewer: React.FC = () => {
         );
       } else if (event.key === 'ArrowDown') {
         setCurrentSlideIndex(prevIndex => 
-          prevIndex < slides.length - 1 ? prevIndex + 1 : prevIndex
+          prevIndex < contentData.slides.length - 1 ? prevIndex + 1 : prevIndex
         );
       }
     };
@@ -49,9 +82,52 @@ const SlideViewer: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [slides.length]);
+  }, [contentData]);
 
-  const currentSlide = slides[currentSlideIndex];
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        fontSize: '18px',
+        color: '#666'
+      }}>
+        Loading slides...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        padding: '40px',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '24px', color: '#e74c3c', marginBottom: '20px' }}>
+          Error Loading Content
+        </div>
+        <div style={{ fontSize: '16px', color: '#666', marginBottom: '20px' }}>
+          {error}
+        </div>
+        <div style={{ fontSize: '14px', color: '#999' }}>
+          Make sure the content file exists in the dist directory.
+        </div>
+      </div>
+    );
+  }
+
+  if (!contentData) {
+    return null;
+  }
+
+  const currentSlide = contentData.slides[currentSlideIndex];
   const slideContent = marked(currentSlide.text);
 
   return (
@@ -102,7 +178,7 @@ const SlideViewer: React.FC = () => {
         color: '#7f8c8d',
         textAlign: 'center'
       }}>
-        Slide {currentSlideIndex + 1} of {slides.length}
+        Slide {currentSlideIndex + 1} of {contentData.slides.length}
       </div>
       
       <div style={{
