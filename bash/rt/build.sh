@@ -2,16 +2,29 @@
 
 echo "Checking for Node.js and npm..."
 if command -v node &> /dev/null && command -v npm &> /dev/null; then
-    echo "Node.js and npm found. Building React application..."
+    echo "Node.js and npm found. Building TypeScript React application..."
     
     echo "Installing dependencies..."
     npm install
     
-    echo "Building React application with webpack..."
-    npm run build
+    echo "Running TypeScript type check..."
+    if npm run type-check; then
+        echo "✅ TypeScript type check passed"
+    else
+        echo "❌ TypeScript type check failed"
+        exit 1
+    fi
+    
+    echo "Building TypeScript React application with webpack..."
+    if npm run build; then
+        echo "✅ Build completed successfully"
+    else
+        echo "❌ Build failed"
+        exit 1
+    fi
     
     echo ""
-    echo "Build complete! The React application is ready to run."
+    echo "🎉 TypeScript React application build complete!"
     echo ""
     echo "To open the React application:"
     echo "1. Open index.html in your web browser"
@@ -20,20 +33,14 @@ if command -v node &> /dev/null && command -v npm &> /dev/null; then
     echo ""
     echo "Use the ↑ and ↓ arrow keys to increment/decrement the number."
     echo ""
-    echo "To rebuild after changes, run: npm run build"
-    echo "For development with auto-rebuild, run: npm run dev"
+    echo "Development commands:"
+    echo "- To rebuild after changes: npm run build"
+    echo "- For development with auto-rebuild: npm run dev"
+    echo "- To run type checking only: npm run type-check"
 else
-    echo "Node.js or npm not found. Using standalone HTML version..."
+    echo "❌ Error: Node.js or npm not found."
     echo ""
-    echo "The standalone counter application is ready to run!"
-    echo ""
-    echo "To open the application:"
-    echo "1. Open counter.html in your web browser"
-    echo "2. Or run: open counter.html (on macOS)"
-    echo "3. Or run: xdg-open counter.html (on Linux)"
-    echo ""
-    echo "Use the ↑ and ↓ arrow keys to increment/decrement the number."
-    echo ""
-    echo "Note: This is a standalone HTML file that doesn't require Node.js or webpack."
-    echo "If you want to use the React version, please install Node.js first."
+    echo "This TypeScript React application requires Node.js and npm to build."
+    echo "Please install Node.js from https://nodejs.org/ and try again."
+    exit 1
 fi 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-function Counter() {
-  const [count, setCount] = useState(1);
+const Counter: React.FC = () => {
+  const [count, setCount] = useState<number>(1);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowUp') {
         setCount(prevCount => prevCount + 1);
       } else if (event.key === 'ArrowDown') {
@@ -39,6 +39,6 @@ function Counter() {
       </div>
     </div>
   );
-}
+};
 
 export default Counter; 
