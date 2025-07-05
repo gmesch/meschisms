@@ -68,6 +68,13 @@ const SlideViewer: React.FC = () => {
     return 0;
   };
 
+  // Function to navigate to a specific slide
+  const navigateToSlide = (slideIndex: number) => {
+    if (contentData && slideIndex >= 0 && slideIndex < contentData.slides.length) {
+      setCurrentSlideIndex(slideIndex);
+    }
+  };
+
   useEffect(() => {
     const loadContent = async () => {
       try {
@@ -186,6 +193,8 @@ const SlideViewer: React.FC = () => {
 
   const currentSlide = contentData.slides[currentSlideIndex];
   const slideContent = marked(currentSlide.text);
+  const hasPrevious = currentSlideIndex > 0;
+  const hasNext = currentSlideIndex < contentData.slides.length - 1;
 
   return (
     <div style={{
@@ -237,6 +246,7 @@ const SlideViewer: React.FC = () => {
       <div style={{
         flex: '1 1 auto',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
@@ -255,6 +265,74 @@ const SlideViewer: React.FC = () => {
           }}
           dangerouslySetInnerHTML={{ __html: slideContent }}
         />
+        
+        {/* Navigation links */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
+          maxWidth: '800px',
+          marginTop: '30px',
+          padding: '0 20px'
+        }}>
+          <div style={{
+            flex: '1',
+            textAlign: 'left'
+          }}>
+            {hasPrevious && (
+              <button
+                onClick={() => navigateToSlide(currentSlideIndex - 1)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#3498db',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  padding: '10px 0',
+                  fontFamily: 'inherit'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#2980b9';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#3498db';
+                }}
+              >
+                ← Previous: {contentData.slides[currentSlideIndex - 1].title}
+              </button>
+            )}
+          </div>
+          
+          <div style={{
+            flex: '1',
+            textAlign: 'right'
+          }}>
+            {hasNext && (
+              <button
+                onClick={() => navigateToSlide(currentSlideIndex + 1)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#3498db',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  padding: '10px 0',
+                  fontFamily: 'inherit'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#2980b9';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#3498db';
+                }}
+              >
+                Next: {contentData.slides[currentSlideIndex + 1].title} →
+              </button>
+            )}
+          </div>
+        </div>
       </div>
       
       {/* Fixed footer section - always at bottom */}
