@@ -26,6 +26,7 @@ export const useKeyboardNavigation = ({
 }: UseKeyboardNavigationProps): void => {
   useEffect(() => {
     if (!contentData) return;
+    const maxIndex = contentData.slides.length; // allow up to and including last slide
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (showSummary) {
@@ -56,7 +57,7 @@ export const useKeyboardNavigation = ({
         } else if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
           // Next slide
           onSetCurrentSlideIndex(prevIndex => 
-            prevIndex < contentData.slides.length - 1 ? prevIndex + 1 : prevIndex
+            prevIndex < maxIndex ? prevIndex + 1 : prevIndex
           );
         }
       }

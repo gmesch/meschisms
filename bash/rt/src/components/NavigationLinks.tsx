@@ -13,12 +13,17 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
   currentSlideIndex,
   onNavigateToSlide
 }) => {
-  const hasPrevious = currentSlideIndex > 0;
-  const hasNext = currentSlideIndex < contentData.slides.length - 1;
+  const totalSlides = contentData.slides.length + 1;
+  const hasPrevious = currentSlideIndex > 1;
+  const hasNext = currentSlideIndex < contentData.slides.length;
   
   // Get current content file to preserve in URLs
   const contentFile = getContentFile();
   const contentParam = contentFile !== 'content.yaml' ? `&content=${contentFile}` : '';
+
+  // Calculate indices for previous and next slides in the slides array
+  const prevIdx = currentSlideIndex - 2; // slides[0] is first real slide
+  const nextIdx = currentSlideIndex;     // slides[0] is first real slide
 
   return (
     <div style={{
@@ -58,7 +63,7 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
               e.currentTarget.style.color = '#3498db';
             }}
           >
-            ← Previous: {contentData.slides[currentSlideIndex - 1].title}
+            ← Previous: {contentData.slides[prevIdx].title}
           </a>
         )}
       </div>
@@ -91,7 +96,7 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
               e.currentTarget.style.color = '#3498db';
             }}
           >
-            Next: {contentData.slides[currentSlideIndex + 1].title} →
+            Next: {contentData.slides[nextIdx].title} →
           </a>
         )}
       </div>

@@ -14,7 +14,68 @@ export const SlideView: React.FC<SlideViewProps> = ({
   currentSlideIndex,
   onNavigateToSlide
 }) => {
-  const currentSlide = contentData.slides[currentSlideIndex];
+  // Title slide at index 0
+  if (currentSlideIndex === 0) {
+    return (
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: 'Arial, sans-serif',
+        padding: '40px',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div style={{
+            fontSize: '48px',
+            fontWeight: 'bold',
+            color: '#2c3e50',
+            marginBottom: '20px',
+            textAlign: 'center',
+          }}>
+            {contentData.title}
+          </div>
+        </div>
+        <NavigationLinks
+          contentData={contentData}
+          currentSlideIndex={currentSlideIndex}
+          onNavigateToSlide={onNavigateToSlide}
+        />
+        <div style={{
+          height: '80px',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end'
+        }}>
+          <div style={{
+            fontSize: '14px',
+            color: '#95a5a6',
+            textAlign: 'center',
+            height: '20px',
+            lineHeight: '20px'
+          }}>
+            Use ↑/← and ↓/→ arrow keys to navigate slides • Press Enter for overview
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // All other slides are shifted by 1
+  const slideIdx = currentSlideIndex - 1;
+  const currentSlide = contentData.slides[slideIdx];
   const slideContent = renderMarkdown(currentSlide.text);
 
   return (
@@ -110,7 +171,7 @@ export const SlideView: React.FC<SlideViewProps> = ({
           height: '20px',
           lineHeight: '20px'
         }}>
-          Slide {currentSlideIndex + 1} of {contentData.slides.length}
+          Slide {currentSlideIndex} of {contentData.slides.length}
         </div>
         
         <div style={{

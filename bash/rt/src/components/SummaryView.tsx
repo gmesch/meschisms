@@ -95,55 +95,82 @@ export const SummaryView: React.FC<SummaryViewProps> = ({
           maxWidth: '800px',
           margin: '0 auto'
         }}>
-                      {contentData.slides.map((slide, index) => (
-              <a
-                key={index}
-                data-slide-index={index}
-                href={`?slide=${index}${contentParam}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigateToSlide(index);
-                }}
-                style={{
-                  display: 'block',
-                  padding: '15px 20px',
-                  margin: '10px 0',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  backgroundColor: index === highlightedSlide ? '#3498db' : '#ffffff',
-                  color: index === highlightedSlide ? '#ffffff' : '#2c3e50',
-                  border: index === highlightedSlide ? '2px solid #2980b9' : '2px solid #ecf0f1',
-                  transition: 'all 0.2s ease',
-                  fontSize: '18px',
-                  fontWeight: index === highlightedSlide ? 'bold' : 'normal'
-                }}
-                onMouseEnter={(e) => {
-                  if (index !== highlightedSlide) {
-                    e.currentTarget.style.backgroundColor = '#ecf0f1';
-                    e.currentTarget.style.borderColor = '#bdc3c7';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (index !== highlightedSlide) {
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.borderColor = '#ecf0f1';
-                  }
-                }}
-                          >
-                <div style={{
-                  fontSize: '16px',
-                  marginBottom: '5px',
-                  opacity: 0.8
-                }}>
-                  Slide {index + 1}
-                </div>
-                <div style={{
-                  fontSize: '20px',
-                  fontWeight: 'bold'
-                }}>
-                  {slide.title}
-                </div>
-              </a>
+          {/* Title slide as first entry */}
+          <a
+            data-slide-index={0}
+            href={`?slide=0${contentParam}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigateToSlide(0);
+            }}
+            style={{
+              display: 'block',
+              padding: '15px 20px',
+              margin: '10px 0',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              backgroundColor: highlightedSlide === 0 ? '#3498db' : '#ffffff',
+              color: highlightedSlide === 0 ? '#ffffff' : '#2c3e50',
+              border: highlightedSlide === 0 ? '2px solid #2980b9' : '2px solid #ecf0f1',
+              transition: 'all 0.2s ease',
+              fontSize: '18px',
+              fontWeight: highlightedSlide === 0 ? 'bold' : 'normal'
+            }}
+            onMouseEnter={e => {
+              if (highlightedSlide !== 0) {
+                e.currentTarget.style.backgroundColor = '#ecf0f1';
+                e.currentTarget.style.borderColor = '#bdc3c7';
+              }
+            }}
+            onMouseLeave={e => {
+              if (highlightedSlide !== 0) {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.borderColor = '#ecf0f1';
+              }
+            }}
+          >
+            <div style={{ fontSize: '16px', marginBottom: '5px', opacity: 0.8 }}>Title Slide</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{contentData.title}</div>
+          </a>
+          {/* All other slides, shifted by 1 */}
+          {contentData.slides.map((slide, index) => (
+            <a
+              key={index + 1}
+              data-slide-index={index + 1}
+              href={`?slide=${index + 1}${contentParam}`}
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateToSlide(index + 1);
+              }}
+              style={{
+                display: 'block',
+                padding: '15px 20px',
+                margin: '10px 0',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                backgroundColor: highlightedSlide === index + 1 ? '#3498db' : '#ffffff',
+                color: highlightedSlide === index + 1 ? '#ffffff' : '#2c3e50',
+                border: highlightedSlide === index + 1 ? '2px solid #2980b9' : '2px solid #ecf0f1',
+                transition: 'all 0.2s ease',
+                fontSize: '18px',
+                fontWeight: highlightedSlide === index + 1 ? 'bold' : 'normal'
+              }}
+              onMouseEnter={e => {
+                if (highlightedSlide !== index + 1) {
+                  e.currentTarget.style.backgroundColor = '#ecf0f1';
+                  e.currentTarget.style.borderColor = '#bdc3c7';
+                }
+              }}
+              onMouseLeave={e => {
+                if (highlightedSlide !== index + 1) {
+                  e.currentTarget.style.backgroundColor = '#ffffff';
+                  e.currentTarget.style.borderColor = '#ecf0f1';
+                }
+              }}
+            >
+              <div style={{ fontSize: '16px', marginBottom: '5px', opacity: 0.8 }}>Slide {index + 1}</div>
+              <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{slide.title}</div>
+            </a>
           ))}
         </div>
       </div>
