@@ -30,3 +30,125 @@ slides:
       pipeline command is considered failed (and causes the shell to exit when
       `set -e` is on) if the last command in the pipeline fails. This option
       makes a pipeline fail if any command in the pipeline fails.
+
+  - title: Define all variables const
+    text: |
+      ```bash
+      declare -r FOO=bar
+      ```
+
+      The option `-r` to the `declare` builtin makes a variable value
+      immutable.
+
+      Motivation: This makes it very reliable to lookup the meaning of a
+      variable: If you find the `declare` statement of the variable, you know
+      this is the value it must have wherever it is referenced, because there is
+      no way to ever change its value in between the definition and the use.
+
+  - title: Fail at undefined variables
+    text: |
+      ```bash
+      set -u
+      ```
+
+      The option `-u` makes it an error to reference undefined
+      variables. Together with option `-e`, it causes the shell to exit with
+      error whenever an undefined variable is used.
+
+      Motivation: Variables are easier to understand if they are defined. So
+      every variable should be defined before it's used. This enforces it.
+
+  - title: Summary of semantic safety rules
+    text: |
+      ```bash
+      set -euo pipefail
+      declare -r FOO=bar
+      ```
+
+      These 3 rules make shell scripts much more robust. There are, however,
+      some pitfalls in applying these rules, explained next.
+
+  - title: errors in command substitutions
+    text: |
+      Command substutions are affected by `set -e` only in variable
+      assignments but NOT in command line arguments. For example,
+
+      ```bash
+      PYTHON_VERSION=$(python --version | sed 's/Python //')
+      ```
+
+      will fail if `python` is not found on `PATH`. But this will not:
+
+      ```bash
+      declare -r PYTHON_VERSION=$(python --version | sed 's/Python //')
+      ```
+
+      The "reason" is that `set -e` affects command interpolation only if it
+      appears in a variable assignment. It does NOT affect any command line
+      interpolation in the arguments of a command. Now, `declare` is just
+      another command, and the variable assignment is just one of its
+      arguments. No errors are caught there.
+
+      The solution is this pattern:
+
+      ```bash
+      PYTHON_VERSION=$(python --version | sed 's/Python //')
+      declare -r PYTHON_VERSION
+      if [[ $PYTHON_VERSION = 3.* ]]; then ...; fi
+      ```
+
+      * Assign command interpolation to a veriable. Under `set -e` this fails if
+        the command fails.
+
+      * `declare -r` the variable to ensure it is not declared again.
+
+      * Use the variable.
+
+  - title: That's really it
+    text: |
+      With these rules and their pitfalls in mind, shell scripts are already
+      much more robust.
+
+      Next we summarize a few concepts that are essential to understand in
+      order to robust write (and read) shell scripts.
+
+  - title: Array variables
+    text: |
+      ```bash
+      declare -ra PIP_PACKAGES=(
+        numpy
+        pandas
+        torch
+      )
+      ```
+
+      Variables can hold array values if declared using `declare -a`. It can
+      be combined with `declare -r`. Like scalar variables the array value
+      of a readonly array variable is immutable.
+
+  - title: Use array variables for long command lines
+    text: |
+      ```bash
+      pip install "${PIP_PACKAGES[@]}"
+      ```
+
+      Instead of writing long argument lists of commands in a continued line,
+      write the arguments down as an array. The array elements can be commented
+      on without interfering with escape character needed to continue a long
+      line.
+
+  - title: Access all elements of an array variable
+    text: |
+      There are two ways to substitute all elements of an array variable at once.
+
+      On the previous slide we used `[@]`. The alternative is `[*]`. In this
+      case it would be wrong:
+
+      ```bash
+      pip install "${PIP_PACKAGES[*]}"
+      ```
+
+      Array variables can be dereferenced as a list value using the `[@]`
+      index inside double quotes. Using the `[*]` index dereferences all
+      list values as a single string value. The command above would fail
+      because it cannot install the package called `numpy pandas torch`.
