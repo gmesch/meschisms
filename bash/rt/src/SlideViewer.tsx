@@ -153,11 +153,11 @@ const SlideViewer: React.FC = () => {
         if (event.key === 'Enter') {
           // Go to highlighted slide
           navigateToSlide(highlightedSlide);
-        } else if (event.key === 'ArrowLeft') {
-          // Move highlight left
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          // Move highlight left/up (previous slide)
           moveHighlight('left');
-        } else if (event.key === 'ArrowRight') {
-          // Move highlight right
+        } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          // Move highlight right/down (next slide)
           moveHighlight('right');
         } else if (event.key === 'Escape') {
           // Exit summary view
@@ -168,11 +168,13 @@ const SlideViewer: React.FC = () => {
         if (event.key === 'Enter') {
           // Show summary
           toggleSummary();
-        } else if (event.key === 'ArrowUp') {
+        } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+          // Previous slide
           setCurrentSlideIndex(prevIndex => 
             prevIndex > 0 ? prevIndex - 1 : prevIndex
           );
-        } else if (event.key === 'ArrowDown') {
+        } else if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+          // Next slide
           setCurrentSlideIndex(prevIndex => 
             prevIndex < contentData.slides.length - 1 ? prevIndex + 1 : prevIndex
           );
@@ -517,7 +519,7 @@ const SlideViewer: React.FC = () => {
           height: '20px',
           lineHeight: '20px'
         }}>
-          Use ↑ and ↓ arrow keys to navigate slides • Press Enter for overview
+          Use ↑/← and ↓/→ arrow keys to navigate slides • Press Enter for overview
         </div>
       </div>
     </div>
