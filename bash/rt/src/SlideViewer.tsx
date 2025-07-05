@@ -438,9 +438,9 @@ const SlideViewer: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
         overflow: 'hidden',
-        minHeight: 0
+        minHeight: 0,
+        paddingTop: '20px'
       }}>
         <div 
           style={{
@@ -450,20 +450,21 @@ const SlideViewer: React.FC = () => {
             color: '#34495e',
             maxWidth: '800px',
             width: '100%',
-            maxHeight: '100%',
+            flex: '1',
             overflow: 'auto'
           }}
           dangerouslySetInnerHTML={{ __html: slideContent }}
         />
         
-        {/* Navigation links */}
+        {/* Navigation links - positioned at bottom of content area */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           width: '100%',
           maxWidth: '800px',
-          marginTop: '30px',
-          padding: '0 20px'
+          marginTop: '20px',
+          padding: '0 20px',
+          flexShrink: 0
         }}>
           <div style={{
             flex: '1',
