@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
@@ -33,6 +33,7 @@ const SlideViewer: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState<boolean>(false);
   const [highlightedSlide, setHighlightedSlide] = useState<number>(0);
+  const summaryScrollRef = useRef<HTMLDivElement>(null);
 
   // Function to update URL with current slide
   const updateURL = (slideIndex: number) => {
@@ -189,6 +190,33 @@ const SlideViewer: React.FC = () => {
     };
   }, [contentData, showSummary, highlightedSlide]);
 
+  // Auto-scroll to highlighted slide in summary view
+  useEffect(() => {
+    if (showSummary && summaryScrollRef.current && contentData) {
+      const container = summaryScrollRef.current;
+      const slideElements = container.querySelectorAll('[data-slide-index]');
+      const highlightedElement = slideElements[highlightedSlide] as HTMLElement;
+      
+      if (highlightedElement) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = highlightedElement.getBoundingClientRect();
+        
+        // Check if the highlighted element is outside the visible area
+        const isAbove = elementRect.top < containerRect.top;
+        const isBelow = elementRect.bottom > containerRect.bottom;
+        
+        if (isAbove || isBelow) {
+          // Scroll the element into view with some padding
+          highlightedElement.scrollIntoView({
+            behavior: 'smooth',
+            block: isAbove ? 'start' : 'end',
+            inline: 'nearest'
+          });
+        }
+      }
+    }
+  }, [highlightedSlide, showSummary, contentData]);
+
   if (loading) {
     return (
       <div style={{
@@ -279,11 +307,14 @@ const SlideViewer: React.FC = () => {
         </div>
 
         {/* Slides list */}
-        <div style={{
-          flex: '1',
-          overflow: 'auto',
-          padding: '0 20px'
-        }}>
+        <div 
+          ref={summaryScrollRef}
+          style={{
+            flex: '1',
+            overflow: 'auto',
+            padding: '0 20px'
+          }}
+        >
           <div style={{
             maxWidth: '800px',
             margin: '0 auto'
@@ -291,6 +322,7 @@ const SlideViewer: React.FC = () => {
             {contentData.slides.map((slide, index) => (
               <div
                 key={index}
+                data-slide-index={index}
                 onClick={() => navigateToSlide(index)}
                 style={{
                   padding: '15px 20px',
