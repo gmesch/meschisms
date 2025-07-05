@@ -31,6 +31,8 @@ const SlideViewer: React.FC = () => {
   const [contentData, setContentData] = useState<ContentData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSummary, setShowSummary] = useState<boolean>(false);
+  const [highlightedSlide, setHighlightedSlide] = useState<number>(0);
 
   // Function to update URL with current slide
   const updateURL = (slideIndex: number) => {
@@ -72,6 +74,30 @@ const SlideViewer: React.FC = () => {
   const navigateToSlide = (slideIndex: number) => {
     if (contentData && slideIndex >= 0 && slideIndex < contentData.slides.length) {
       setCurrentSlideIndex(slideIndex);
+      setShowSummary(false);
+    }
+  };
+
+  // Function to toggle summary view
+  const toggleSummary = () => {
+    if (showSummary) {
+      // If in summary mode, go to the highlighted slide
+      navigateToSlide(highlightedSlide);
+    } else {
+      // If in slide mode, show summary with current slide highlighted
+      setHighlightedSlide(currentSlideIndex);
+      setShowSummary(true);
+    }
+  };
+
+  // Function to move highlight in summary view
+  const moveHighlight = (direction: 'left' | 'right') => {
+    if (!contentData) return;
+    
+    if (direction === 'left') {
+      setHighlightedSlide(prev => prev > 0 ? prev - 1 : prev);
+    } else {
+      setHighlightedSlide(prev => prev < contentData.slides.length - 1 ? prev + 1 : prev);
     }
   };
 
@@ -122,14 +148,35 @@ const SlideViewer: React.FC = () => {
     if (!contentData) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowUp') {
-        setCurrentSlideIndex(prevIndex => 
-          prevIndex > 0 ? prevIndex - 1 : prevIndex
-        );
-      } else if (event.key === 'ArrowDown') {
-        setCurrentSlideIndex(prevIndex => 
-          prevIndex < contentData.slides.length - 1 ? prevIndex + 1 : prevIndex
-        );
+      if (showSummary) {
+        // Summary view navigation
+        if (event.key === 'Enter') {
+          // Go to highlighted slide
+          navigateToSlide(highlightedSlide);
+        } else if (event.key === 'ArrowLeft') {
+          // Move highlight left
+          moveHighlight('left');
+        } else if (event.key === 'ArrowRight') {
+          // Move highlight right
+          moveHighlight('right');
+        } else if (event.key === 'Escape') {
+          // Exit summary view
+          setShowSummary(false);
+        }
+      } else {
+        // Slide view navigation
+        if (event.key === 'Enter') {
+          // Show summary
+          toggleSummary();
+        } else if (event.key === 'ArrowUp') {
+          setCurrentSlideIndex(prevIndex => 
+            prevIndex > 0 ? prevIndex - 1 : prevIndex
+          );
+        } else if (event.key === 'ArrowDown') {
+          setCurrentSlideIndex(prevIndex => 
+            prevIndex < contentData.slides.length - 1 ? prevIndex + 1 : prevIndex
+          );
+        }
       }
     };
 
@@ -138,7 +185,7 @@ const SlideViewer: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [contentData]);
+  }, [contentData, showSummary, highlightedSlide]);
 
   if (loading) {
     return (
@@ -191,6 +238,115 @@ const SlideViewer: React.FC = () => {
     return null;
   }
 
+  // Summary view
+  if (showSummary) {
+    return (
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: 'Arial, sans-serif',
+        padding: '40px',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+        backgroundColor: '#f8f9fa'
+      }}>
+        {/* Header */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '40px'
+        }}>
+          <h1 style={{
+            fontSize: '32px',
+            color: '#2c3e50',
+            margin: '0 0 10px 0'
+          }}>
+            {contentData.title}
+          </h1>
+          <p style={{
+            fontSize: '16px',
+            color: '#7f8c8d',
+            margin: 0
+          }}>
+            Click on a slide or use arrow keys to navigate, Enter to select
+          </p>
+        </div>
+
+        {/* Slides list */}
+        <div style={{
+          flex: '1',
+          overflow: 'auto',
+          padding: '0 20px'
+        }}>
+          <div style={{
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}>
+            {contentData.slides.map((slide, index) => (
+              <div
+                key={index}
+                onClick={() => navigateToSlide(index)}
+                style={{
+                  padding: '15px 20px',
+                  margin: '10px 0',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  backgroundColor: index === highlightedSlide ? '#3498db' : '#ffffff',
+                  color: index === highlightedSlide ? '#ffffff' : '#2c3e50',
+                  border: index === highlightedSlide ? '2px solid #2980b9' : '2px solid #ecf0f1',
+                  transition: 'all 0.2s ease',
+                  fontSize: '18px',
+                  fontWeight: index === highlightedSlide ? 'bold' : 'normal'
+                }}
+                onMouseEnter={(e) => {
+                  if (index !== highlightedSlide) {
+                    e.currentTarget.style.backgroundColor = '#ecf0f1';
+                    e.currentTarget.style.borderColor = '#bdc3c7';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (index !== highlightedSlide) {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ecf0f1';
+                  }
+                }}
+              >
+                <div style={{
+                  fontSize: '16px',
+                  marginBottom: '5px',
+                  opacity: 0.8
+                }}>
+                  Slide {index + 1}
+                </div>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold'
+                }}>
+                  {slide.title}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center',
+          padding: '20px 0',
+          color: '#7f8c8d',
+          fontSize: '14px'
+        }}>
+          Press Enter to go to highlighted slide • Press Escape to return to current slide
+        </div>
+      </div>
+    );
+  }
+
+  // Regular slide view
   const currentSlide = contentData.slides[currentSlideIndex];
   const slideContent = marked(currentSlide.text);
   const hasPrevious = currentSlideIndex > 0;
@@ -361,7 +517,7 @@ const SlideViewer: React.FC = () => {
           height: '20px',
           lineHeight: '20px'
         }}>
-          Use ↑ and ↓ arrow keys to navigate slides
+          Use ↑ and ↓ arrow keys to navigate slides • Press Enter for overview
         </div>
       </div>
     </div>
