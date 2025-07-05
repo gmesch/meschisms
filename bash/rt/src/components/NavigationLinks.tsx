@@ -1,5 +1,6 @@
 import React from 'react';
 import { ContentData } from '../types';
+import { getContentFile } from '../urlUtils';
 
 interface NavigationLinksProps {
   contentData: ContentData;
@@ -14,6 +15,10 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
 }) => {
   const hasPrevious = currentSlideIndex > 0;
   const hasNext = currentSlideIndex < contentData.slides.length - 1;
+  
+  // Get current content file to preserve in URLs
+  const contentFile = getContentFile();
+  const contentParam = contentFile !== 'content.yaml' ? `&content=${contentFile}` : '';
 
   return (
     <div style={{
@@ -30,8 +35,12 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
         textAlign: 'left'
       }}>
         {hasPrevious && (
-          <button
-            onClick={() => onNavigateToSlide(currentSlideIndex - 1)}
+          <a
+            href={`?slide=${currentSlideIndex - 1}${contentParam}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigateToSlide(currentSlideIndex - 1);
+            }}
             style={{
               background: 'none',
               border: 'none',
@@ -50,7 +59,7 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
             }}
           >
             ← Previous: {contentData.slides[currentSlideIndex - 1].title}
-          </button>
+          </a>
         )}
       </div>
       
@@ -59,8 +68,12 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
         textAlign: 'right'
       }}>
         {hasNext && (
-          <button
-            onClick={() => onNavigateToSlide(currentSlideIndex + 1)}
+          <a
+            href={`?slide=${currentSlideIndex + 1}${contentParam}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigateToSlide(currentSlideIndex + 1);
+            }}
             style={{
               background: 'none',
               border: 'none',
@@ -79,7 +92,7 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
             }}
           >
             Next: {contentData.slides[currentSlideIndex + 1].title} →
-          </button>
+          </a>
         )}
       </div>
     </div>

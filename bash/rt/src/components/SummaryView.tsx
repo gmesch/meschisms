@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { ContentData } from '../types';
+import { getContentFile } from '../urlUtils';
 
 interface SummaryViewProps {
   contentData: ContentData;
@@ -13,6 +14,10 @@ export const SummaryView: React.FC<SummaryViewProps> = ({
   onNavigateToSlide
 }) => {
   const summaryScrollRef = useRef<HTMLDivElement>(null);
+  
+  // Get current content file to preserve in URLs
+  const contentFile = getContentFile();
+  const contentParam = contentFile !== 'content.yaml' ? `&content=${contentFile}` : '';
 
   // Auto-scroll to highlighted slide in summary view
   useEffect(() => {
@@ -90,50 +95,55 @@ export const SummaryView: React.FC<SummaryViewProps> = ({
           maxWidth: '800px',
           margin: '0 auto'
         }}>
-          {contentData.slides.map((slide, index) => (
-            <div
-              key={index}
-              data-slide-index={index}
-              onClick={() => onNavigateToSlide(index)}
-              style={{
-                padding: '15px 20px',
-                margin: '10px 0',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                backgroundColor: index === highlightedSlide ? '#3498db' : '#ffffff',
-                color: index === highlightedSlide ? '#ffffff' : '#2c3e50',
-                border: index === highlightedSlide ? '2px solid #2980b9' : '2px solid #ecf0f1',
-                transition: 'all 0.2s ease',
-                fontSize: '18px',
-                fontWeight: index === highlightedSlide ? 'bold' : 'normal'
-              }}
-              onMouseEnter={(e) => {
-                if (index !== highlightedSlide) {
-                  e.currentTarget.style.backgroundColor = '#ecf0f1';
-                  e.currentTarget.style.borderColor = '#bdc3c7';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (index !== highlightedSlide) {
-                  e.currentTarget.style.backgroundColor = '#ffffff';
-                  e.currentTarget.style.borderColor = '#ecf0f1';
-                }
-              }}
-            >
-              <div style={{
-                fontSize: '16px',
-                marginBottom: '5px',
-                opacity: 0.8
-              }}>
-                Slide {index + 1}
-              </div>
-              <div style={{
-                fontSize: '20px',
-                fontWeight: 'bold'
-              }}>
-                {slide.title}
-              </div>
-            </div>
+                      {contentData.slides.map((slide, index) => (
+              <a
+                key={index}
+                data-slide-index={index}
+                href={`?slide=${index}${contentParam}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigateToSlide(index);
+                }}
+                style={{
+                  display: 'block',
+                  padding: '15px 20px',
+                  margin: '10px 0',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  backgroundColor: index === highlightedSlide ? '#3498db' : '#ffffff',
+                  color: index === highlightedSlide ? '#ffffff' : '#2c3e50',
+                  border: index === highlightedSlide ? '2px solid #2980b9' : '2px solid #ecf0f1',
+                  transition: 'all 0.2s ease',
+                  fontSize: '18px',
+                  fontWeight: index === highlightedSlide ? 'bold' : 'normal'
+                }}
+                onMouseEnter={(e) => {
+                  if (index !== highlightedSlide) {
+                    e.currentTarget.style.backgroundColor = '#ecf0f1';
+                    e.currentTarget.style.borderColor = '#bdc3c7';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (index !== highlightedSlide) {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ecf0f1';
+                  }
+                }}
+                          >
+                <div style={{
+                  fontSize: '16px',
+                  marginBottom: '5px',
+                  opacity: 0.8
+                }}>
+                  Slide {index + 1}
+                </div>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold'
+                }}>
+                  {slide.title}
+                </div>
+              </a>
           ))}
         </div>
       </div>
